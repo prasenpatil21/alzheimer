@@ -84,6 +84,8 @@ run_manage_page();
 
 
 add_action( 'wp_ajax_my_action', 'my_action' );
+add_action( 'wp_ajax_my_products_edit', 'my_products_edit' );
+add_action( 'wp_ajax_my_products_delete', 'my_products_delete' );
 
 function my_action() {
   global $wpdb; // this is how you get access to the database
@@ -99,6 +101,27 @@ $sql="INSERT INTO googlefroms SET FormName = '$name' ";
   die;
 
   // wp_die(); // this is required to terminate immediately and return a proper response
+}
+
+function my_products_edit() {
+	global $wpdb;
+  $id = $_POST['id'];
+	$sql="INSERT INTO googlefroms SET FormName = '$name' ";
+  $results = $wpdb->get_results($sql);
+  $fds=true;
+  echo json_encode($fds);
+  die;
+}
+
+function my_products_delete() {
+	global $wpdb;
+  $id = $_POST['id'];
+	$sql="DELETE FROM wp_products where id=$id";
+  $results = $wpdb->get_results($sql);
+  $fds=true;
+  echo json_encode($fds);
+  die;
+	// wp_redirect(admin_url('wp-admin/admin.php?page=example-options-3', 'http'), 301);
 }
 
 add_action("admin_menu","addMenu");
@@ -183,7 +206,67 @@ function questionnaireMenu(){
 
 function productsMenu(){
 	echo "<br>";
-	echo "In products menu";
+	global $wpdb;
+	$sql="SELECT * FROM wp_products";
+	$results = $wpdb->get_results($sql);
+
+	if(!empty($results))
+	{
+		// get_header();
+		?>
+			<!-- on click redirect page to questionaire -->
+			<a href="http://localhost/alzheimer/al/add_question/"><button>Click here</button></a> <br>
+
+			<table border="2" style="width:100%;">
+				<tr>
+					<th>Category</th>
+					<th>Product Name</th>
+					<th>Price</th>
+					<th colspan="2">Action</th>
+				</tr>
+
+			<?php
+
+			foreach($results as $row){
+				?>
+				<tr>
+					<td align="center"><?php echo $row->category; ?></td>
+					<td align="center"><?php echo $row->product_name; ?></td>
+					<td align="center"><?php echo $row->price; ?></td>
+					<td align="center"><button onclick='edited(<?php echo $row->id;?>)' style="border:none;background-color:#f1f1f1;color:#444;">Edit</button></td>
+					<td align="center"><button onclick='deleted(<?php echo $row->id;?>)' style="border:none;background-color:#f1f1f1;color:#444;">Delete</button></td>
+				</tr>
+
+				<?php
+				}
+				?>
+			</table>
+				<?php
+				// get_footer();
+	}
+	?>
+	<script type="text/javascript">
+			function edited(id){
+				// alert("inside edited function"+id);
+				// console.log("console of edited");
+				var params = {id:id,action:"my_products_edit"};
+				jQuery.post(ajaxurl, params, function(response) {
+					console.log("edited"+response);
+				});
+			}
+
+			function deleted(id){
+				// alert("inside deleted function"+id);
+				var params = {id:id,action:"my_products_delete"};
+				jQuery.post(ajaxurl, params, function(response) {
+					console.log("deleted:"+response);
+				});
+
+			}
+	</script>
+	<?php
+
+
 }
 
 function testingMenu(){
@@ -337,22 +420,11 @@ function googleforms()
         // console.log(ajaxurl)
         jQuery.post(ajaxurl, params, function(response) {
           console.log(response);
-      alert('Got this from the server: ' + response);
-    });
-         
+		      alert('Got this from the server: ' + response);
+		    });
       }
 
-    //    function test(){
-       
-    //     var question = document.getElementById('question').value;
-    //      alert(question)
-    //      var params = {question:question,action:"my_actionpages"};
-    //     console.log(ajaxurl)
-    //     jQuery.post(ajaxurl, params, function(response) {
-    //   alert('Got this from the server: ' + response);
-        
-    // });
-    //   }
+
     </script>
 
     <script async defer src="https://apis.google.com/js/api.js"
