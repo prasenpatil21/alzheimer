@@ -128,39 +128,51 @@ function websiteMenu(){
 }
 
 function questionnaireMenu(){
-	echo "<br>";
-	global $wpdb;
-	$sql="SELECT * FROM wp_products";
-	$results = $wpdb->get_results($sql);
+  $postdata = $_POST;
+  // print_r($postdata);
+  if(is_array($postdata) && count($postdata))
+  {
+    echo "string";
+    echo "<pre>";
+    print_r($postdata);
+    echo "</pre>";
+  }
+
+   get_header();
+  global $wpdb;
+  $sql="SELECT q.* , rf.risk_name  FROM `wp_questionnaire` q , `wp_risk_factors` rf Where q.risk_factor_id = rf.id and q.status = '1' ";
+  $results = $wpdb->get_results($sql);
 
   if(!empty($results))
   {
-		// get_header();
-		?>
-			<!-- on click redirect page to questionaire -->
-			<a href="http://localhost/alzheimer/al/add_question/"><button>Click here</button></a> <br>
+    // get_header();
+    ?>
+      <!-- on click redirect page to questionaire -->
+      <a href="http://localhost/alzheimer/al/add_question/"><button class="btn btn-primary">Add uestion</button></a> <br>
+	     <br>
 
-			<table border="2" style="width:50%;">
+			<table border="2"  class="table table-striped">
 				<tr>
-					<th>category</th>
-					<th>product_name</th>
-					<th>price</th>
+          <th>Sr No.</th>
+					<th>Risk Factor</th>
+					<th>Question</th>
 					<th colspan="2">Action</th>
 				</tr>
 
 			<?php
-
+      $counter="1";
 			foreach($results as $row){
 				?>
 				<tr>
-					<td align="center"><?php echo $row->category; ?></td>
-					<td align="center"><?php echo $row->product_name; ?></td>
-					<td align="center"><?php echo $row->price; ?></td>
-					<td align="center"><button style="border:none;background-color:#f1f1f1;color:#444;"><?php  ?>Edit</button></td>
-					<td align="center"><button style="border:none;background-color:#f1f1f1;color:#444;"><?php  ?>Delete</button></td>
+          <td align="center"><?php echo $counter; ?></td>
+					<td align="center"><?php echo $row->risk_name; ?></td>
+					<td align="center"><?php echo $row->question; ?></td>
+					<td align="center"><button class="btn btn-xs btn-warning"><?php  ?>Edit</button></td>
+					<td align="center"><button class="btn btn-xs btn-warning"><?php  ?>Delete</button></td>
 				</tr>
 
 				<?php
+        $counter++;
   			}
 				?>
 			</table>
