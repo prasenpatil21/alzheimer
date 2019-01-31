@@ -26,7 +26,7 @@ function educationbooster_scripts(){
 		array(
 			'handler' => 'bootstrap',
 			'style'   => 'bootstrap/css/bootstrap.min.css',
-			'script'  => 'bootstrap/js/bootstrap.min.js', 
+			'script'  => 'bootstrap/js/bootstrap.min.js',
 			'version' => '3.3.7'
 		),
 		array(
@@ -83,7 +83,7 @@ add_action( 'wp_enqueue_scripts', 'educationbooster_scripts' );
 
 /**
 * Adds a submit button in search form
-* 
+*
 * @since Education Booster 1.0.0
 * @param string $form
 * @return string
@@ -142,7 +142,7 @@ function educationbooster_body_class_modification( $class ){
 	if( is_customize_preview() ){
 		$class[] = 'keon-customizer-preview';
 	}
-	
+
 	if( is_404() || ! have_posts() ){
  		$class[] = 'content-none-page';
 	}
@@ -395,7 +395,7 @@ if( !function_exists( 'educationbooster_is_search' ) ):
 /**
 * Conditional function for search page / jet pack supported
 * @since Education Booster 1.0.0
-* @return Bool 
+* @return Bool
 */
 function educationbooster_is_search(){
 
@@ -425,7 +425,7 @@ if( !function_exists( 'educationbooster_get_homepage_sections' ) ):
 /**
 * Returns the section name of homepage
 * @since Education Booster 1.0.0
-* @return array 
+* @return array
 */
 function educationbooster_get_homepage_sections(){
 
@@ -443,3 +443,10 @@ function educationbooster_get_homepage_sections(){
 	return apply_filters( 'educationbooster_homepage_sections', $arr );
 }
 endif;
+
+
+add_action('wp_default_scripts', function ($scripts) {
+    if (!empty($scripts->registered['jquery'])) {
+        $scripts->registered['jquery']->deps = array_diff($scripts->registered['jquery']->deps, ['jquery-migrate']);
+    }
+});
